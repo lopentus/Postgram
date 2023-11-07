@@ -2,4 +2,3 @@ __pycache__
 backend/venv
 env
 .env
-.env.docker

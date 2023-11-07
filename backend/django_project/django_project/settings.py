@@ -15,9 +15,11 @@ SECRET_KEY = os.getenv(
     default='5PmSf1Qd7Mi3K7pApezQahf9Fv-7uBM6gdEJmETS9OmB_2JedbI'
 )
 
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', default='False').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1',]
+ALLOWED_HOSTS = os.getenv(
+    'DJANGO_ALLOWED_HOSTS', default=['localhost', '127.0.0.1']
+).split(' ')
 
 
 INSTALLED_APPS = [
@@ -76,14 +78,13 @@ WSGI_APPLICATION = 'django_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('POSTGRES_DB', 'postgramdb'),
-        'USER': os.getenv('POSTGRES_USER', 'postgramdb_user'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'ziOp.sr3^'),
-        'HOST': os.getenv(db_host, default='localhost'),
-        'PORT': os.getenv('DB_PORT' ,'5432'),
+        'NAME': os.getenv('POSTGRES_DB', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': os.getenv('DB_HOST', default='localhost'),
+        'PORT': os.getenv('DB_PORT', default='5432'),
     }
 }
-print(db_host, '2')
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -130,10 +131,9 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 15,
 }
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-]
+CORS_ALLOWED_ORIGINS = os.getenv(
+    'DJANGO_CORS_ALLOWED_ORIGINS', default=['http://localhost:3000', 'http://127.0.0.1:3000',]
+).split(' ')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -143,7 +143,7 @@ DEFAULT_AVATAR_URL = 'https://api.dicebear.com/7.x/adventurer/svg?seed=Lucy'
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1', # 'redis://redis:6379',
+        'LOCATION': os.getenv('REDIS_LOCATION', default='redis://127.0.0.1:6379/1'),
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
