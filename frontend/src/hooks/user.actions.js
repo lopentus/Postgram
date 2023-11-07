@@ -13,6 +13,16 @@ function useUserActions() {
         edit,
     };
 
+    // Logout the user
+    function logout() {
+        return axiosService.post(`${baseURL}-auth/logout/`, {
+            refresh: getRefreshToken()
+        }).then(() => {
+            localStorage.removeItem("auth");
+            navigate("/login");
+        })
+    }
+
     // Edit the user
     function edit(data, userId) {
         return axiosService.patch(
@@ -53,12 +63,6 @@ function useUserActions() {
                 setUserData(res.data);
                 navigate("/")
             })
-    }
-
-    // Logout the user
-    function logout() {
-        localStorage.removeItem("auth");
-        navigate("/login")
     }
 }
 

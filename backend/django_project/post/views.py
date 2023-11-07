@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
+from django.core.cache import cache
 
 from core.abstract.views import AbstractViewSet
 from core.auth.permissions import UserPermission
@@ -12,6 +13,22 @@ class PostViewSet(AbstractViewSet):
     http_method_names = ('post', 'get', 'put', 'delete')
     permission_classes = (UserPermission,)
     serializer_class = PostSerializer
+
+    def list(self, request, *args, **kwargs):
+        post_objects = cache.get('post_objects')
+        print(post_objects)
+
+        if not post_objects:
+            post_objects = self.filter_queryset(self.get_queryset())
+            cache.set('post_objects', post_objects)
+
+        page = self.paginate_queryset(post_objects)
+        if page:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(post_objects, many=True)
+        return Response(serializer.data)
 
     def get_queryset(self):
         return Post.objects.all()

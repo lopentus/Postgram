@@ -23,7 +23,7 @@ function SinglePost() {
                         <Post post={post.data} refresh={post.mutate} isSinglePost />
                         <CreateComment postId={post.data.id} refresh={comments.mutate} />
                         {comments.data &&
-                            comments.data.results.map((comment, index) => (
+                            comments.data.results?.map((comment, index) => (
                             <Comment
                                 key={index}
                                 postId={post.data.id}

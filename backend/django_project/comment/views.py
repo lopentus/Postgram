@@ -1,4 +1,5 @@
 from django.http.response import Http404
+from django.core.cache import cache
 
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -14,6 +15,24 @@ class CommentViewSet(AbstractViewSet):
     http_method_names = ('post', 'get', 'put', 'delete')
     permission_classes = (UserPermission,)
     serializer_class = CommentSerializer
+
+    def list(self, request, *args, **kwargs):
+        post_pk = self.kwargs.get('post_pk')
+        print(post_pk)
+        comment_objects = cache.get('comment_objects')
+        print(cache.get(f'comment_objects_{post_pk}'), 3)
+
+        if not comment_objects:
+            comment_objects = self.filter_queryset(self.get_queryset())
+            cache.set(f'comment_objects_{post_pk}', comment_objects)
+
+        page = self.paginate_queryset(comment_objects)
+        if page:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(comment_objects, many=True)
+        return Response(serializer.data)
 
     def get_queryset(self):
         if self.request.user.is_superuser:
