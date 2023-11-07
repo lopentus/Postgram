@@ -31,7 +31,6 @@ REDIS_LOCATION=redis://127.0.0.1:6379/1''' > .env
 sudo su postgres
 psql
 CREATE DATABASE postgram_db;
-CREATE USER postgram_user;
 CREATE USER postgram_user WITH PASSWORD 'postgram_password';
 GRANT ALL PRIVILEGES ON DATABASE postgram_db TO postgram_user;
 ALTER USER postgram_user CREATEDB;
