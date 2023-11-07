@@ -1,6 +1,6 @@
 # Postgram
 
-## Start the project
+## Start the project:
 
 ### Clone the repository
 ```bash
@@ -22,9 +22,25 @@ DJANGO_CORS_ALLOWED_ORIGINS=http://localhost:3000 http://127.0.0.1:3000
 REDIS_LOCATION=redis://127.0.0.1:6379/1''' > .env
 ```
 
-# Run locally
+# Run project in docker:
+```bash
+docker compose up -d
+```
+#### wait some time to let docker build containers
 
-## Start backend:
+#### logs:
+```bash
+docker logs <container_name> -f
+```
+
+#### stop containers:
+```bash
+docker compose down
+```
+
+# Run locally:
+
+## Start backend
 
 ### postgresql
 ```bash
