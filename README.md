@@ -61,7 +61,7 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### Run migrations
+### Run migrations and start server
 ```bash
 cd django_project/
 python manage.py migrate
