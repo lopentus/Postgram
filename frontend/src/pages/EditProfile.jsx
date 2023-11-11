@@ -16,7 +16,7 @@ function EditProfile() {
             {profile.data ? (
                 <Row className="justify-content-evenly">
                     <Col sm={9}>
-                        <UpdateProfileForm profile={profile.data} />
+                        <UpdateProfileForm profile={profile.data} refresh={profile.mutate} />
                     </Col>
                 </Row>
             ) : (

@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
+    'drf_spectacular',
     # Local
     'core',
     'core.user',
@@ -129,6 +130,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 15,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 CORS_ALLOWED_ORIGINS = os.getenv(
@@ -148,4 +150,10 @@ CACHES = {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
     }
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Postgram API',
+    'DESCRIPTION': 'Postgram description',
+    'VERSION': '1.0.0',
 }

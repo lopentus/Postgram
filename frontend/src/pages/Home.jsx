@@ -50,7 +50,7 @@ function Home() {
                     </h4>
                     <div className="d-flex flex-column">
                         {profiles.data && profiles.data.results.map((profile, index) => (
-                            <ProfileCard key={index} user={profile} />
+                            profile.id !== user.id && <ProfileCard key={index} user={profile} />
                         ))}
                     </div>
                 </Col>

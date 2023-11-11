@@ -25,7 +25,7 @@ function Profile() {
                         <Row className="my-4">
                             {posts.data &&
                                 posts.data.results?.map((post, index) => (
-                                <Post key={index} post={post} refresh={posts.mutate} />
+                                post.author.id === profileId && <Post key={index} post={post} refresh={posts.mutate} />
                             ))}
                         </Row>
                     </div>

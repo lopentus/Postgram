@@ -5,7 +5,7 @@ import { useUserActions } from "../hooks/user.actions";
 import { Context } from "./Layout";
 
 function UpdateProfileForm(props) {
-    const { profile } = props;
+    const { profile, refresh } = props;
     const navigate = useNavigate();
 
     const [validated, setValidated] = useState(false);
@@ -51,6 +51,7 @@ function UpdateProfileForm(props) {
                     show: true,
                     title: "Profile updated",
                 });
+                refresh();
                 navigate(-1);
             })
             .catch((err) => {
@@ -59,6 +60,21 @@ function UpdateProfileForm(props) {
                 }
             })
     };
+
+    const [preview, setPreview] = useState();
+
+    const handleImageChange = (e) => {
+        let image_file = e.target.files[0];
+        setForm({ ...form, image: image_file});
+
+        let image_reader = new FileReader();
+        image_reader.onloadend = () => {
+            setPreview(image_reader.result);
+        }
+        image_reader.readAsDataURL(image_file);
+
+        setAvatar(image_file)
+    }
 
     return (
         <Form
@@ -77,8 +93,17 @@ function UpdateProfileForm(props) {
                     height={120}
                     className="m-2 border border-primary border-2 align-self-center"
                 />
+                {preview && (
+                    <Image
+                        src={preview}
+                        roundedCircle
+                        width={120}
+                        height={120}
+                        className="m-2 border border-primary border-2 align-self-center"
+                    />
+                )}
                 <Form.Control
-                    onChange={(e) => setAvatar(e.target.files[0])}
+                    onChange={handleImageChange}
                     className="w-50 align-self-center"
                     type="file"
                     size="sm"
