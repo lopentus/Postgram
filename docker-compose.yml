@@ -31,8 +31,8 @@ services:
       DB_HOST: db
       REDIS_LOCATION: redis://redis:6379
     command: >
-      sh -c "python3 /app/django_project/manage.py migrate &&
-             python3 /app/django_project/manage.py runserver 0.0.0.0:8000"
+      sh -c "python3 /app/postgram/manage.py migrate &&
+             python3 /app/postgram/manage.py runserver 0.0.0.0:8000"
     ports:
       - '8000:8000'
     depends_on:
