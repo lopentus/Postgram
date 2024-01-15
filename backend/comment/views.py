@@ -18,9 +18,7 @@ class CommentViewSet(AbstractViewSet):
 
     def list(self, request, *args, **kwargs):
         post_pk = self.kwargs.get('post_pk')
-        print(post_pk)
         comment_objects = cache.get('comment_objects')
-        print(cache.get(f'comment_objects_{post_pk}'), 3)
 
         if not comment_objects:
             comment_objects = self.filter_queryset(self.get_queryset())

@@ -90,15 +90,6 @@ function Post(props) {
                             <small>{post.likes_count} like</small>
                         </p>
                     </div>
-                    {!isSinglePost && (
-                        <p className="ms-1 fs-6">
-                            <small>
-                                <Link to={`/post/${post.id}/`}>
-                                    {post.comments_count} comments
-                                </Link>
-                            </small>
-                        </p>
-                    )}
                 </Card.Body>
                 <Card.Footer className="d-flex bg-white w-50 justify-content-between border-0">
                     <div className="d-flex flex-row">
@@ -124,15 +115,17 @@ function Post(props) {
                     </div>
                     {!isSinglePost && (
                     <div className="d-flex flex-row">
-                        <CommentOutlined
-                            style={{
-                                width: "24px",
-                                height: "24px",
-                                padding: "2px",
-                                fontSize: "20px",
-                                color: "#C4C4C4",
-                            }}
-                        />
+                        <Link to={`/post/${post.id}/`}>
+                            <CommentOutlined
+                                style={{
+                                    width: "24px",
+                                    height: "24px",
+                                    padding: "2px",
+                                    fontSize: "20px",
+                                    color: "#C4C4C4",
+                                }}
+                            />
+                        </Link>
                         <p className="ms-1 mb-0">
                             <small>Comment</small>
                         </p>

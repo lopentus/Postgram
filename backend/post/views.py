@@ -16,7 +16,6 @@ class PostViewSet(AbstractViewSet):
 
     def list(self, request, *args, **kwargs):
         post_objects = cache.get('post_objects')
-        print(post_objects)
 
         if not post_objects:
             post_objects = self.filter_queryset(self.get_queryset())
