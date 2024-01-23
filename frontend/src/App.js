@@ -8,6 +8,8 @@ import Login from "./pages/Login";
 import SinglePost from "./pages/SinglePost";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
+import ChooseChat from "./components/chats/ChooseChat";
+import Chat from "./components/chats/Chat";
 
 function App() {
     return (
@@ -31,6 +33,18 @@ function App() {
             <Route path="/post/:postId/" element={
                     <ProtectedRoute>
                         <SinglePost />
+                    </ProtectedRoute>
+                }
+            />
+            <Route path="/chat/" element={
+                    <ProtectedRoute>
+                        <ChooseChat />
+                    </ProtectedRoute>
+                }
+            />
+            <Route path="/chat/:roomName/" element={
+                    <ProtectedRoute>
+                        <Chat />
                     </ProtectedRoute>
                 }
             />

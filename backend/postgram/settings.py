@@ -23,6 +23,7 @@ ALLOWED_HOSTS = os.getenv(
 
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'auth',
     'post',
     'comment',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -155,4 +157,15 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Postgram API',
     'DESCRIPTION': 'Postgram description',
     'VERSION': '1.0.0',
+}
+
+ASGI_APPLICATION = 'postgram.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
 }
