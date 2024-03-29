@@ -20,7 +20,7 @@ function Profile() {
         <Layout hasNavigtationBack>
             <Row className="justify-content-evenly">
                 <Col sm={9}>
-                    <ProfileDetails user={user.data}/>
+                    <ProfileDetails user={user.data} />
                     <div>
                         <Row className="my-4">
                             {posts.data &&

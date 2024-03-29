@@ -7,6 +7,7 @@ from abstract.serializers import AbstractSerializer
 
 class UserSerializer(AbstractSerializer):
     bio = serializers.CharField(allow_null=True)
+    posts_count = serializers.IntegerField(read_only=True, allow_null=True)
 
     class Meta:
         model = User
@@ -21,6 +22,7 @@ class UserSerializer(AbstractSerializer):
             'is_active',
             'created',
             'updated',
+            'posts_count',
         ]
         read_only_field = ['is_active']
 

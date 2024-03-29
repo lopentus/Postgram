@@ -4,3 +4,4 @@ env
 .env
 backend/media
 dump.rdb
+notes_postgram.md

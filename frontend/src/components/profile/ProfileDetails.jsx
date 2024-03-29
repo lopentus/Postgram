@@ -1,14 +1,20 @@
 import React from "react";
 import { Button, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import CreateChat from "../chats/CreateChat"
 
 function ProfileDetails(props) {
     const { user } = props;
     const navigate = useNavigate();
-    console.log(user);
     if (!user) {
         return <div>Loading...</div>;
     }
+    const auth = JSON.parse(localStorage.getItem("auth"));
+    const loggedInUserId = auth.user.id;
+
+    // const handleChatCreateButtonClick = () => {
+    //     CreateChat();
+    // }
 
     return (
         <div>
@@ -26,14 +32,18 @@ function ProfileDetails(props) {
                     <p className="fs-6">
                         <small>{user.posts_count} posts</small>
                     </p>
-                    <Button
-                        variant="primary"
-                        size="sm"
-                        className="w-75"
-                        onClick={() => navigate(`/profile/${user.id}/edit/`)}
-                    >
-                        Edit
-                    </Button>
+                    {loggedInUserId === user.id ? (
+                        <Button
+                            variant="primary"
+                            size="sm"
+                            className="text-center"
+                            onClick={() => navigate(`/profile/${user.id}/edit/`)}
+                        >
+                            Edit
+                        </Button>
+                    ) : (
+                        <CreateChat />
+                    )}
                 </div>
             </div>
         </div>

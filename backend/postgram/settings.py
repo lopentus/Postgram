@@ -1,5 +1,6 @@
-from pathlib import Path
 import os
+import datetime
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -168,4 +169,9 @@ CHANNEL_LAYERS = {
             "hosts": [("127.0.0.1", 6379)],
         },
     },
+}
+
+# remove later
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(minutes=300),
 }

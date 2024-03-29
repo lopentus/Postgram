@@ -6,6 +6,7 @@ from django.db import models
 from django.http import Http404
 
 from abstract.models import AbstractModel, AbstractManager
+from post.models import Post
 
 
 def user_directory_path(instance, filename):
@@ -68,7 +69,7 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
     )
     comments_liked = models.ManyToManyField(
         'comment.Comment',
-        related_name='comment_liked_by'
+        related_name='comment_liked_by',
     )
 
     USERNAME_FIELD = 'email'
@@ -106,3 +107,7 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
     def has_liked_comment(self, comment):
         """Return True if the user has liked a 'post'; else False"""
         return self.comments_liked.filter(pk=comment.pk).exists()
+
+    def posts_count(self):
+        """Return how many posts user has created."""
+        return self.post_set.count()

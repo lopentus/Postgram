@@ -1,40 +1,54 @@
-import {useParams} from "react-router-dom";
-import {getAccessToken} from "../../hooks/user.actions";
+import React from "react"; // , { useState }
+import { format } from "timeago.js";
+// import {
+//     LikeFilled,
+//     CommentOutlined,
+//     LikeOutlined,
+// } from "@ant-design/icons";
+import { Card } from "react-bootstrap"; // Image, Card, Dropdown
+// import axiosService from "../../helpers/axios";
+// import Toaster from "../Toaster";
+// import { getUser } from "../../hooks/user.actions";
+import { Link } from "react-router-dom"
+// import MoreToggleIcon from "../MoreToggleIcon";
 
-function Chat() {
-    const { roomName } = useParams();
-    const token = getAccessToken();
-    const chatSocket = new WebSocket(
-        `ws://localhost:8000/ws/chat/${roomName}/?token=${token}`
-    );
-    console.log(chatSocket)
-    chatSocket.onopen = () => {
-        console.log('ws connection established.');
-    };
-    chatSocket.onmessage = function (e) {
-        const data = JSON.parse(e.data);
-        document.querySelector('#chat-log').value += (data.message + '\n');
-    };
-    window.onload = function () {
-        document.querySelector('#chat-message-submit').onclick = function (e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInputDom.value = '';
-        };
-    };
+function Chat(props) {
+    const { chat } = props;
+
+    // const [showToast, setShowToast] = useState(false);
+    // const user = getUser();
+
+    console.log(chat.participants)
+
+    // chats.participants.filter(participant => participant.id.replace(/-/g, '')
 
     return (
-        <div>
-            <textarea
-                id="chat-log" cols="100" rows="20" readOnly
-            /> <br/>
-            <input id="chat-message-input" type="text" size="100"/><br/>
-            <input id="chat-message-submit" type="button" value="Send"/>
-        </div>
-    )
+        <>
+            <Card className="rounded-3 my-4"
+                  data-testid="chat-test">
+                <Card.Body>
+                    <Link to={`/chat/${chat.id}/`}>
+                        <Card.Title className="d-flex flex-row justify-content-between">
+                            <div className="d-flex flex-column justify-content-start align-self-center mt-2">
+                                <p className="fs-6 m-0">{chat.participants.map(({ username }) => username).join(', ')}</p>
+                                <p className="fs-6 fw-lighter">
+                                    <small>{format(chat.created)}</small>
+                                </p>
+                            </div>
+                        </Card.Title>
+                        <Card.Text>{chat.body}</Card.Text>
+                    </Link>
+                </Card.Body>
+            </Card>
+            {/*<Toaster*/}
+            {/*    title="Chat!"*/}
+            {/*    message="Chat deleted!"*/}
+            {/*    type="danger"*/}
+            {/*    showToast={showToast}*/}
+            {/*    onClose={() => setShowToast(false)}*/}
+            {/*/>*/}
+        </>
+    );
 }
 
 export default Chat;
