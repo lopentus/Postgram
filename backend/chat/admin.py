@@ -13,5 +13,11 @@ class ChatPageAdmin(admin.ModelAdmin):
         return ', '.join([message.body for message in messages])
 
 
+class MessagePageAdmin(admin.ModelAdmin):
+    readonly_fields = ('created',)
+    fields = ['chat', 'sender', 'created']
+    list_display = ('sender', 'body', 'created')
+
+
 admin.site.register(Chat, ChatPageAdmin)
-admin.site.register(Message)
+admin.site.register(Message, MessagePageAdmin)
