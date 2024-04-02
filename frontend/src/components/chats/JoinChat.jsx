@@ -11,11 +11,12 @@ function JoinChat() {
     const user = getUser();
     const [loadingMore, setLoadingMore] = useState(false);
     let [receivedMessages, setReceivedMessages] = useState(null);
-    let participant = '';
     let scrollCount = 1;
     const chatLogRef = useRef(null);
     const [scrolledOnce, setScrolledOnce] = useState(false);
     const emptyCallDbRef = useRef(false);
+    const [receiver, setReceiver] = useState({});
+    const [initialScrollHeight, setInitialScrollHeight] = useState(0);
 
     useEffect(() => {
         scrollToBottom();
@@ -26,6 +27,8 @@ function JoinChat() {
             scrollToBottom();
             setScrolledOnce(true);
         } else {
+            chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight - initialScrollHeight;
+            setInitialScrollHeight(chatLogRef.current.scrollHeight);
         }
     }, [receivedMessages, scrolledOnce]);
 
@@ -41,6 +44,7 @@ function JoinChat() {
         socket.onopen = () => {
             console.log('ws opened');
             fetch_messages();
+            fetch_receiver();
         };
 
         socket.onclose = () => {
@@ -49,29 +53,31 @@ function JoinChat() {
 
         socket.onmessage = (e) => {
             const data = JSON.parse(e.data);
-            console.log(!data.message.length, '!data.message.length')
-            console.log(data)
-            if (!data.message.length) {
-                emptyCallDbRef.current = true;
-            }
-
-            if (scrollCount < 2) {
-                if (Array.isArray(data.message) && data.message) {
-                    setReceivedMessages(prevReceivedMessages => {
-                const messagesArray = Array.isArray(prevReceivedMessages) ? prevReceivedMessages : [];
-                return [...messagesArray, ...data.message];
-            });
-                } else {
-                    setMessages(prevMessages => [...prevMessages, data.message]);
-                }
+            if (data.receiver_data && data.receiver_data['command'] === 'fetch_receiver') {
+                setReceiver(data.receiver_data)
             } else {
-                if (Array.isArray(data.message) && data.message) {
-                    setReceivedMessages(prevReceivedMessages => {
-                const messagesArray = Array.isArray(prevReceivedMessages) ? prevReceivedMessages : [];
-                return [...data.message, ...messagesArray];
-            });
+                if (Array.isArray(data.message) && !data.message.length) {
+                    emptyCallDbRef.current = true;
+                }
+
+                if (scrollCount < 2) {
+                    if (Array.isArray(data.message) && data.message) {
+                        setReceivedMessages(prevReceivedMessages => {
+                    const messagesArray = Array.isArray(prevReceivedMessages) ? prevReceivedMessages : [];
+                    return [...messagesArray, ...data.message];
+                });
+                    } else {
+                        setMessages(prevMessages => [...prevMessages, data.message]);
+                    }
                 } else {
-                    setMessages(prevMessages => [...prevMessages, data.message]);
+                    if (Array.isArray(data.message) && data.message) {
+                        setReceivedMessages(prevReceivedMessages => {
+                    const messagesArray = Array.isArray(prevReceivedMessages) ? prevReceivedMessages : [];
+                    return [...messagesArray, ...data.message];
+                });
+                    } else {
+                        setMessages(prevMessages => [...prevMessages, data.message]);
+                    }
                 }
             }
         };
@@ -84,12 +90,15 @@ function JoinChat() {
         });
 
         document.querySelector('#chat-message-submit').onclick = function (e) {
+            send_message();
+        };
+
+        const send_message = () => {
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
+            const message_data = {command: 'send_message', message};
             if (messageInputDom.value !== '') {
-                socket.send(JSON.stringify({
-                    'message': message
-                }));
+                socket.send(JSON.stringify(message_data));
             }
             messageInputDom.value = '';
         };
@@ -99,19 +108,20 @@ function JoinChat() {
             socket.send(JSON.stringify(fetchedMessages));
         };
 
+        const fetch_receiver = () => {
+            const fetchedReceiver = {command: 'fetch_receiver'};
+            socket.send(JSON.stringify(fetchedReceiver));
+        };
+
         function handleScroll(event) {
             const chatLog = event.target;
-            console.log(emptyCallDbRef.current, 'emptyCallDbRef.current')
             if (chatLog.scrollTop === 0 && !loadingMore) {
                 if (!emptyCallDbRef.current) {
                     setLoadingMore(true);
                     scrollCount++;
-                    const prevScrollHeight = chatLogRef.current.scrollHeight;
                     fetch_messages();
-                    setTimeout(() => {
-                        const newScrollHeight = chatLogRef.current.scrollHeight;
-                        chatLogRef.current.scrollTop += newScrollHeight - prevScrollHeight + 1;
-                    }, 0);
+                    chatLogRef.current.scrollTop += 1;
+                    setInitialScrollHeight(chatLogRef.current.scrollHeight);
                 } else {
                     setLoadingMore(false);
                 }
@@ -143,6 +153,7 @@ function JoinChat() {
         }
     }, [loadingMore]);
 
+
     return (
         <Layout>
             <Row className="justify-content-evenly">
@@ -156,27 +167,81 @@ function JoinChat() {
                                 height={52}
                                 className="my-2"
                             />
-                            <Link to={`/profile/${participant.id}/`} style={{
+                            <Link to={`/profile/${receiver.public_id}/`} style={{
                                 textDecoration: 'none', color: 'black', marginLeft: '200px'
                                 }}>
                                 <h4>
-                                    {participant.username}
+                                    {receiver.username}
                                 </h4>
                             </Link>
                         </Col>
                         <div>
-                            <div id="chat-log" style={{ width: '100%', height: '600px', overflowY: 'scroll' }} ref={chatLogRef}>
-                                {receivedMessages?.map((message, index) => (
-                                    <p key={index}>{message.message} {message.sender} {message.created}</p>
+                            <div id="chat-log" style={{width: '100%', height: '600px', overflowY: 'scroll'}}
+                                 ref={chatLogRef}>
+                                {receivedMessages?.slice().reverse().map((message) => (
+                                    <div key={message.public_id} style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: message.sender === receiver.username ? 'flex-end' : 'flex-start'
+                                    }}>
+                                        <div style={{
+                                            display: 'flex',
+                                            justifyContent: message.sender === receiver.username ? 'flex-end' : 'flex-start',
+                                            marginBottom: '1px'
+                                        }}>
+                                            <span>{message.sender}</span>
+                                            &nbsp;
+                                            <span>{message.created}</span>
+                                        </div>
+                                        <div style={{
+                                            display: 'flex',
+                                            justifyContent: message.sender === receiver.username ? 'flex-end' : 'flex-start',
+                                            maxWidth: '70%'
+                                        }}>
+                                            <p style={{
+                                                margin: '4px',
+                                                backgroundColor: message.sender === receiver.username ? '#d9f9f7' : '#f3f3f3',
+                                                padding: '8px',
+                                                borderRadius: message.sender === receiver.username ? '8px 0 0 8px' : '0 8px 8px 0',
+                                                maxWidth: '100%',
+                                                wordWrap: 'break-word'
+                                            }}>{message.message}</p>
+                                        </div>
+                                    </div>
                                 ))}
-                                {messages?.map((message, index) => (
-                                    <p key={index}>{message.message} {message.sender} {message.created}</p>
-                                ))}
-                                {/*{messages?.map((message, index) => (*/}
-                                {/*    <p key={index}>{JSON.parse(message).message} {JSON.parse(message).user} {JSON.parse(message).created}</p>*/}
-                                {/*))}*/}
+                            {messages?.map((message) => (
+                                <div key={message.public_id} style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: message.sender === receiver.username ? 'flex-end' : 'flex-start'
+                                }}>
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: message.sender === receiver.username ? 'flex-end' : 'flex-start',
+                                        marginBottom: '1px'
+                                    }}>
+                                        <span>{message.sender}</span>
+                                        &nbsp;
+                                        <span>{message.created}</span>
+                                    </div>
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: message.sender === receiver.username ? 'flex-end' : 'flex-start',
+                                        maxWidth: '70%'
+                                    }}>
+                                        <p style={{
+                                            margin: '4px',
+                                            backgroundColor: message.sender === receiver.username ? '#d9f9f7' : '#f3f3f3',
+                                            padding: '8px',
+                                            borderRadius: message.sender === receiver.username ? '8px 0 0 8px' : '0 8px 8px 0',
+                                            maxWidth: '100%',
+                                            wordWrap: 'break-word'
+                                        }}>{message.message}</p>
+                                    </div>
+                                </div>
+                            ))}
                             </div>
-                            <br />
+                            <br/>
                             <input id="chat-message-input" type="text" size={70}/>
                             <input id="chat-message-submit" type="button" value="Send"/><br/>
                         </div>

@@ -16,7 +16,7 @@ class ChatPageAdmin(admin.ModelAdmin):
 class MessagePageAdmin(admin.ModelAdmin):
     readonly_fields = ('created',)
     fields = ['chat', 'sender', 'created']
-    list_display = ('sender', 'body', 'created')
+    list_display = ('public_id', 'sender', 'body', 'created')
 
 
 admin.site.register(Chat, ChatPageAdmin)
