@@ -1,4 +1,3 @@
-import datetime
 import json
 
 from channels.db import database_sync_to_async
@@ -58,6 +57,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         receiver = [participant for participant in participants if self.user.public_id != participant.public_id][0]
         return receiver
 
+    @database_sync_to_async
+    def validate_participants(self):
+        participants = self.chat.participants.all()
+        if self.user not in participants:
+            raise DenyConnection('You do not have access to this chat.')
+
     async def send_message(self, message_data):
         message = message_data['message']
         save_message_and_receive_message_created_time_and_public_id = await self.save_message(message=message)
@@ -99,6 +104,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.chat = (await self.get_chat(self.room_name))
         chat_public_id = self.chat.public_id
         self.room_group_name = f'chat_{chat_public_id}'
+        await self.validate_participants()
         # Join room group
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()

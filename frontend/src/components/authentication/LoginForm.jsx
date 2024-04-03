@@ -28,6 +28,7 @@ function LoginForm() {
             }
         });
     };
+
     return (
         <Form
             id="registration-form"
@@ -69,9 +70,8 @@ function LoginForm() {
                 </Form.Control.Feedback>
             </Form.Group>
             <div className="text-content text-danger">
-                {error && <p>{error}</p>}
+                {error && <p>{JSON.parse(error).detail}</p>}
             </div>
-
             <Button variant="primary" type="submit">
                 Submit
             </Button>

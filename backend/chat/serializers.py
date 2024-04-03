@@ -13,10 +13,6 @@ User = get_user_model()
 # Chat serializer
 class ChatSerializer(AbstractSerializer):
     name = serializers.StringRelatedField(many=True, read_only=True)
-    # messages = serializers.SlugRelatedField(
-    #     queryset=Message.objects.get_object_by_public_id(),
-    #     slug_field='public_id',
-    # )
 
     def validate_participants(self, value):
         if self.context['request'].user not in value:
@@ -35,18 +31,6 @@ class ChatSerializer(AbstractSerializer):
         return value
 
     def to_representation(self, instance):
-        # rep = super().to_representation(instance)
-        # # print(rep['participants'])
-        # participants = []
-        # print(rep['participants'])
-        # for participant in rep['participants']:
-        #     print(User.objects.get(pk=participant))
-        #     participants.append(User.objects.get(pk=participant))
-        # print(participants)
-        # rep['participants'] = participants
-        # # print(rep['participants'])
-        # return rep
-
         rep = super().to_representation(instance)
         participants = rep['participants']
         users = User.objects.filter(pk__in=participants)
@@ -56,8 +40,6 @@ class ChatSerializer(AbstractSerializer):
         print(user_data)
 
         return rep
-
-        # print(participants)
 
     class Meta:
         model = Chat
