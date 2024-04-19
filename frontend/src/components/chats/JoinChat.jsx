@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { getAccessToken, getUser } from "../../hooks/user.actions";
 import Layout from "../Layout";
-import { Col, Image, Row } from "react-bootstrap";
+import { Col, Image, Row, Button, Form } from "react-bootstrap";
 import React, { useEffect, useRef, useState } from "react";
 
 function JoinChat() {
@@ -209,41 +209,54 @@ function JoinChat() {
                                         </div>
                                     </div>
                                 ))}
-                            {messages?.map((message) => (
-                                <div key={message.public_id} style={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: message.sender === receiver.username ? 'flex-end' : 'flex-start'
-                                }}>
-                                    <div style={{
+                                {messages?.map((message) => (
+                                    <div key={message.public_id} style={{
                                         display: 'flex',
-                                        justifyContent: message.sender === receiver.username ? 'flex-end' : 'flex-start',
-                                        marginBottom: '1px'
+                                        flexDirection: 'column',
+                                        alignItems: message.sender === receiver.username ? 'flex-end' : 'flex-start'
                                     }}>
-                                        <span>{message.sender}</span>
-                                        &nbsp;
-                                        <span>{message.created}</span>
+                                        <div style={{
+                                            display: 'flex',
+                                            justifyContent: message.sender === receiver.username ? 'flex-end' : 'flex-start',
+                                            marginBottom: '1px'
+                                        }}>
+                                            <span>{message.sender}</span>
+                                            &nbsp;
+                                            <span>{message.created}</span>
+                                        </div>
+                                        <div style={{
+                                            display: 'flex',
+                                            justifyContent: message.sender === receiver.username ? 'flex-end' : 'flex-start',
+                                            maxWidth: '70%'
+                                        }}>
+                                            <p style={{
+                                                margin: '4px',
+                                                backgroundColor: message.sender === receiver.username ? '#d9f9f7' : '#f3f3f3',
+                                                padding: '8px',
+                                                borderRadius: message.sender === receiver.username ? '8px 0 0 8px' : '0 8px 8px 0',
+                                                maxWidth: '100%',
+                                                wordWrap: 'break-word'
+                                            }}>{message.message}</p>
+                                        </div>
                                     </div>
-                                    <div style={{
-                                        display: 'flex',
-                                        justifyContent: message.sender === receiver.username ? 'flex-end' : 'flex-start',
-                                        maxWidth: '70%'
-                                    }}>
-                                        <p style={{
-                                            margin: '4px',
-                                            backgroundColor: message.sender === receiver.username ? '#d9f9f7' : '#f3f3f3',
-                                            padding: '8px',
-                                            borderRadius: message.sender === receiver.username ? '8px 0 0 8px' : '0 8px 8px 0',
-                                            maxWidth: '100%',
-                                            wordWrap: 'break-word'
-                                        }}>{message.message}</p>
-                                    </div>
-                                </div>
-                            ))}
+                                ))}
                             </div>
                             <br/>
-                            <input id="chat-message-input" type="text" size={70}/>
-                            <input id="chat-message-submit" type="button" value="Send"/><br/>
+                            <Row>
+                                <Col md={10} className="p-0">
+                                    <Form.Control
+                                        id="chat-message-input"
+                                        className="border-primary"
+                                        type="text"
+                                        placeholder="Write a message"
+                                    />
+                                </Col>
+                                <Col md={2} className="p-0">
+                                    <Button variant="primary" id="chat-message-submit">
+                                        Send
+                                    </Button>
+                                </Col>
+                            </Row>
                         </div>
                     </Row>
                 </Col>

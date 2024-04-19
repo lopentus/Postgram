@@ -18,9 +18,11 @@ function Chat(props) {
     // const [showToast, setShowToast] = useState(false);
     // const user = getUser();
 
-    console.log(chat.participants)
+    // console.log(chat.participants)
 
     // chats.participants.filter(participant => participant.id.replace(/-/g, '')
+
+    // console.log(chat.body)
 
     return (
         <>
@@ -36,7 +38,7 @@ function Chat(props) {
                                 </p>
                             </div>
                         </Card.Title>
-                        <Card.Text>{chat.body}</Card.Text>
+                        {/*<Card.Text>{chat.body}</Card.Text>*/}
                     </Link>
                 </Card.Body>
             </Card>

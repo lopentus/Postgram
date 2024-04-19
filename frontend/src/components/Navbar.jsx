@@ -38,6 +38,7 @@ function Navigationbar() {
                         }
                     >
                             <NavDropdown.Item as={Link} to={`/profile/${user.id}/`}>Profile</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to={`/chats/`}>Chats</NavDropdown.Item>
                             <NavDropdown.Item
                                 onClick={handleLogout}>Logout
                             </NavDropdown.Item>

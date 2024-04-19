@@ -8,6 +8,7 @@ import { getUser } from "../hooks/user.actions";
 // import Post from "../components/posts/Post";
 // import ProfileCard from "../components/profile/ProfileCard";
 import Chat from "../components/chats/Chat";
+import {Link} from "react-router-dom";
 
 function Chats() {
     const user = getUser();
@@ -18,13 +19,15 @@ function Chats() {
     if (!user) {
         return <div>Loading!</div>;
     }
-    // console.log(chats.data.results)
+
+    console.log(chats.data)
+
     return (
         <Layout>
             <Row className="justify-content-evenly">
                 <Col sm={7}>
                     <Row className="border rounded align-items-center">
-                         <Col className="flex-shrink-1">
+                         <Col className="d-flex flex-shrink-1 align-items-center">
                              <Image
                                  src={user.avatar} // {`http://localhost:8000${user.avatar}`}
                                  roundedCircle
@@ -32,10 +35,14 @@ function Chats() {
                                  height={52}
                                  className="my-2"
                              />
+                             <Link to={`/profile/${user.id}/`} style={{
+                                textDecoration: 'none', color: 'black', marginLeft: '200px'
+                                }}>
+                                <h4>
+                                    Your chats
+                                </h4>
+                            </Link>
                          </Col>
-                        {/*<Col sm={10} className="flex-grow-1">*/}
-                        {/*    <CreatePost refresh={chats.mutate}/>*/}
-                        {/*</Col>*/}
                     </Row>
                     <Row className="my-4">
                         {chats.data &&
